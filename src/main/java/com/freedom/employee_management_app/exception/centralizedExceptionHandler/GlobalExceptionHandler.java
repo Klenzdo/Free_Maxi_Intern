@@ -1,9 +1,11 @@
 package com.freedom.employee_management_app.exception.centralizedExceptionHandler;
 
 import com.freedom.employee_management_app.exception.DuplicateMerchandiseException;
-import com.freedom.employee_management_app.exception.EmployeeIdNotFoundException;
+import com.freedom.employee_management_app.exception.EmployeeNotFoundException;
+import com.freedom.employee_management_app.exception.InvalidPasswordException;
 import com.freedom.employee_management_app.exception.UnauthorizedException;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
+import com.freedom.employee_management_app.service.EmployeeService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +27,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
-    @ExceptionHandler(EmployeeIdNotFoundException.class)
-    public ResponseEntity<ApiResponse<String>> handleEmployeeIdNotFoundException(EmployeeIdNotFoundException ex) {
+    @ExceptionHandler(EmployeeNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> handleEmployeeIdNotFoundException(EmployeeNotFoundException ex) {
         ApiResponse<String> response = new ApiResponse<>(ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> handleEntityNotFoundException(EntityNotFoundException ex) {
         ApiResponse<String> response = new ApiResponse<>(ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ApiResponse<String>> handleInvalidPasswordException(InvalidPasswordException ex) {
+        ApiResponse<String> response = new ApiResponse<>(ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

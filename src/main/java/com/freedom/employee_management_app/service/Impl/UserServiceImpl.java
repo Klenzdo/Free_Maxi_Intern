@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
             admin.setEmail("admin@example.com");
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setRole(Roles.ADMIN);
+            admin.setEmployeeId("ADM-123456");
 
             employeeRepository.save(admin);
             System.out.println("Admin account created successfully");

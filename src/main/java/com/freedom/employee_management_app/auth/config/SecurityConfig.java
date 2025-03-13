@@ -25,7 +25,10 @@ public class SecurityConfig  {
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/api/v3/admin/create-employee",
-            "/api/v3/admin/login"
+            "/api/v3/admin/login",
+            "/api/v3/employee/login",
+            "/api/v3/admin/employees"
+
     };
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, AuthenticationProvider authenticationProvider) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;

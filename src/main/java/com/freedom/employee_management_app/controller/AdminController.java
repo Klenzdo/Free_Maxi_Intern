@@ -2,14 +2,13 @@ package com.freedom.employee_management_app.controller;
 
 import com.freedom.employee_management_app.dto.*;
 import com.freedom.employee_management_app.entity.Employee;
-import com.freedom.employee_management_app.payload.request.EmployeeRequest;
 import com.freedom.employee_management_app.payload.request.LoginRequest;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
 import com.freedom.employee_management_app.payload.response.EmployeeResponse;
 import com.freedom.employee_management_app.service.AdminService;
-import com.freedom.employee_management_app.service.EmployeeService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

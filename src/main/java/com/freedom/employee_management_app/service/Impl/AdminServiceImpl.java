@@ -6,12 +6,16 @@ import com.freedom.employee_management_app.entity.Employee;
 import com.freedom.employee_management_app.entity.Leave;
 import com.freedom.employee_management_app.payload.request.LoginRequest;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
+import com.freedom.employee_management_app.payload.response.EmployeeResponse;
 import com.freedom.employee_management_app.repository.EmployeeRepository;
 import com.freedom.employee_management_app.repository.LeaveRepository;
 import com.freedom.employee_management_app.service.AdminService;
 import com.freedom.employee_management_app.service.EmailService;
 import com.freedom.employee_management_app.utils.SecurityUtils;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
