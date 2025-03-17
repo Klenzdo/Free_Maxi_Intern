@@ -22,8 +22,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.UUID;
 
 
@@ -52,7 +50,6 @@ public class AdminServiceImpl implements AdminService {
     private final AuthenticationProvider authenticationProvider;
 
 
-
     @Override
     public CreateEmployeeDto createEmployee(EmployeeInfo employeeInfo) {
 
@@ -65,8 +62,6 @@ public class AdminServiceImpl implements AdminService {
         employee.setEmail(employeeInfo.getEmail());
         employee.setRole(employeeInfo.getRole());
         employee.setPassword(passwordEncoder.encode(generateDefaultPassword()));
-
-
 
 
         Employee savedEmployee = employeeRepository.save(employee);
@@ -89,29 +84,28 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
+    @Override
+    public ApiResponse<LoginResponse> login(LoginRequest request) {
 
-@Override
- public ApiResponse<LoginResponse>login(LoginRequest request) {
-
-    System.out.println("About to enter login");
-    Authentication authentication = authenticationProvider.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                    request.getEmail(),
-                    request.getPassword()
-            )
-    );
-    Employee admin = (Employee) authentication.getPrincipal();
+        System.out.println("About to enter login");
+        Authentication authentication = authenticationProvider.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        Employee admin = (Employee) authentication.getPrincipal();
 //    employeeRepository.findByEmployeeId(request.getEmployeeId()).orElseThrow(()->new EntityNotFoundException("Employee with id " + request.getEmployeeId() + " does not exist"));
-    String jwt = jwtService.generateToken(admin, admin.getEmail());
-    return new ApiResponse<> ("Successful login", new LoginResponse(jwt));
-}
+        String jwt = jwtService.generateToken(admin, admin.getEmail());
+        return new ApiResponse<>("Successful login", new LoginResponse(jwt));
+    }
 
     @Override
     public ApiResponse<String> updateLeaveStatus(Long leaveId, String status) {
         Leave leave = leaveRepository.findById(leaveId)
-                .orElseThrow(()-> new RuntimeException("Leave request not found"));
+                .orElseThrow(() -> new RuntimeException("Leave request not found"));
 
-        if (!status.equals ("APPROVED") && !status.equals("REJECTED")){
+        if (!status.equals("APPROVED") && !status.equals("REJECTED")) {
             throw new IllegalArgumentException("Invalid status. Use APPROVED or REJECTED.");
         }
 
@@ -120,31 +114,15 @@ public class AdminServiceImpl implements AdminService {
 
         return new ApiResponse<>("Leave request has been " + status.toLowerCase(), null);
     }
-    public List<Employee> getAllEmployees(){
-        return employeeRepository.findAll();
-    }
+
 
     private String generateDefaultPassword() {
 
-    return "123456";
+        return "123456";
+    }
 }
 
 
-
-// Generate a JWT token for the new user
-//    String verificationToken = verificationTokenService.generateVerificationToken(new Employee());
-//
-//    String verificationUrl = "http://localhost:8080/api/v1/auth/verify?token=" + verificationToken;
-//    // Send an email containing the token
-//    String emailMessageBody = String.format(
-//            "Congratulations %s! Your account has been successfully created.\n\n" +
-//                    "Please keep this token safe as it can be used to authenticate your requests:\n\n" +
-//                    "Token: %s\n\n" +
-//                    "Regards,\nEmployee Management App",
-//            jwtService.extractUsername(verificationToken),
-//            verificationUrl
-//    );
-}
 
 
 

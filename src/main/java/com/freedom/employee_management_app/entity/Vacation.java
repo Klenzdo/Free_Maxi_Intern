@@ -1,10 +1,6 @@
 package com.freedom.employee_management_app.entity;
 
-import com.freedom.employee_management_app.enums.LeaveType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDate;
 
 @Entity
@@ -18,8 +14,6 @@ public class Vacation {
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
-//    @Enumerated (EnumType.STRING)
-//    private VacationType type;
 
     private LocalDate startDate;
     private LocalDate endDate;

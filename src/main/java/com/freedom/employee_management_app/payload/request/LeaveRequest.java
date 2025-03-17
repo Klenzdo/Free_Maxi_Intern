@@ -12,12 +12,9 @@ import java.time.LocalDate;
 @Builder
 public class LeaveRequest {
     private LeaveType type;
-
     private LocalDate startDate;
     private LocalDate endDate;
-
     private String status = "PENDING";
-
     private String documentUrl;
 
     public LeaveRequest(LeaveType type, LocalDate startDate, LocalDate endDate, String status, String documentUrl) {
@@ -27,6 +24,7 @@ public class LeaveRequest {
         this.status = status;
         this.documentUrl = documentUrl;
     }
+
 
     public LeaveType getType() {
         return type;

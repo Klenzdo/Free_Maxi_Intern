@@ -1,6 +1,8 @@
 package com.freedom.employee_management_app.payload.response;
 
 import com.freedom.employee_management_app.enums.Roles;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +15,7 @@ public class EmployeeResponse {
     private String fullName;
     private String employeeId;
     private String email;
+    @Enumerated(EnumType.STRING)
     private Roles role;
 
     public EmployeeResponse(String fullName, String employeeId, String email, Roles role) {

@@ -18,6 +18,7 @@ public class Leave {
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
+
     @Enumerated (EnumType.STRING)
     private LeaveType type;
 

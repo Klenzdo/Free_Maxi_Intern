@@ -3,7 +3,6 @@ package com.freedom.employee_management_app.service.Impl;
 import com.freedom.employee_management_app.dto.EmailDetails;
 import com.freedom.employee_management_app.exception.EmailAlreadyExistsException;
 import com.freedom.employee_management_app.service.EmailService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

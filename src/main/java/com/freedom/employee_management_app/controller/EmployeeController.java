@@ -5,13 +5,11 @@ import com.freedom.employee_management_app.exception.EmployeeNotFoundException;
 import com.freedom.employee_management_app.exception.InvalidPasswordException;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
 import com.freedom.employee_management_app.service.EmployeeService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v3/employee")
-//@RequiredArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -30,9 +28,6 @@ public class EmployeeController {
         if (authHeader == null || !authHeader.startsWith("Bearer")){
             return ResponseEntity.badRequest().body(new ApiResponse<>("Invalid or missing Authorization header", null));
         }
-//        if (token.startsWith("Bearer")){
-//            token = token.substring(7);
-//        }
         String token = authHeader.substring(7);
         ApiResponse<String> response = employeeService.logout(token);
         return ResponseEntity.ok(response);

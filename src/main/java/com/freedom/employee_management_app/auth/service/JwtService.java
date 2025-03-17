@@ -86,13 +86,6 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-//    public void blacklistToken(String token) {
-//        blacklistedTokens.add(token);
-//    }
-//
-//    public boolean isBlacklisted(String token) {
-//        return blacklistedTokens.contains(token);
-//    }
 
 }
 

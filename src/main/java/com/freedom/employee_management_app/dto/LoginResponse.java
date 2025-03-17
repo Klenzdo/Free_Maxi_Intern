@@ -1,12 +1,5 @@
 package com.freedom.employee_management_app.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-
-
 
 public class LoginResponse {
 

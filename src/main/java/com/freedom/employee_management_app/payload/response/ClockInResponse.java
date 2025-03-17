@@ -16,12 +16,11 @@ import java.time.LocalDateTime;
 public class ClockInResponse {
     private LocalDateTime clockInTime;
     private boolean isLate;
-//    private Employee employee;
+
 
     public ClockInResponse(ClockLog clockLog){
         this.clockInTime = clockLog.getClockInTime();
         this.isLate = clockLog.isLate();
-//        employee = clockLog.getEmployee();
     }
 
     public LocalDateTime getClockInTime() {
@@ -40,11 +39,4 @@ public class ClockInResponse {
         isLate = late;
     }
 
-//    public Employee getEmployee() {
-//        return employee;
-//    }
-//
-//    public void setEmployee(Employee employee) {
-//        this.employee = employee;
-//    }
 }

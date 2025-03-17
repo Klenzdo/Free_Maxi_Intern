@@ -1,14 +1,14 @@
 package com.freedom.employee_management_app.controller;
 
 import com.freedom.employee_management_app.dto.*;
-import com.freedom.employee_management_app.entity.Employee;
 import com.freedom.employee_management_app.payload.request.LoginRequest;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
 import com.freedom.employee_management_app.payload.response.EmployeeResponse;
+import com.freedom.employee_management_app.payload.response.LeaveResponse;
 import com.freedom.employee_management_app.service.AdminService;
+import com.freedom.employee_management_app.service.EmployeeService;
+import com.freedom.employee_management_app.service.LeaveService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,9 +22,14 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
+    private final EmployeeService employeeService;
+    private final LeaveService leaveService;
 
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService, EmployeeService employeeService, LeaveService leaveService) {
         this.adminService = adminService;
+        this.employeeService = employeeService;
+        this.leaveService = leaveService;
+
     }
 
 
@@ -52,8 +57,16 @@ public ResponseEntity<ApiResponse<LoginResponse>> login (@RequestBody LoginReque
     }
 
     @GetMapping("/employees")
-    public ResponseEntity<List<Employee>> getAllEmployees(){
-        return ResponseEntity.ok(adminService.getAllEmployees());
+    public ResponseEntity<List<EmployeeResponse>> getAllEmployees(){
+        return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
+    @GetMapping("/pending-leaves")
+    public ResponseEntity<ApiResponse<Page<LeaveResponse>>> getPendingLeaveResponse(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        ApiResponse<Page<LeaveResponse>> response = leaveService.getPendingLeaveRequests(page, size);
+        return ResponseEntity.ok(response);
+
+    }
 }

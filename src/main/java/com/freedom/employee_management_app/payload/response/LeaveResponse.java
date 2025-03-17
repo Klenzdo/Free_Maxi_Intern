@@ -11,54 +11,45 @@ import java.time.LocalDate;
 
 @Builder
 public class LeaveResponse {
+    private Long id;
+    private String employeeId;
     private LeaveType type;
-
     private LocalDate startDate;
     private LocalDate endDate;
-    private String status = ""; // check later after implementation
     private String documentUrl;
-//    private Employee employee;
 
-    public LeaveResponse(LeaveType type,  LocalDate startDate,LocalDate endDate,String documentUrl, String status) {
+
+    public LeaveResponse(Long id, String employeeId, LeaveType type,  LocalDate startDate,LocalDate endDate,String documentUrl) {
+        this.id = id;
+        this.employeeId = employeeId;
         this.type = type;
         this.startDate = startDate;
         this.endDate = endDate;
         this.documentUrl = documentUrl;
-        this.status = status;
-//        this.employee = employee;
-
     }
 
-//    public Employee getEmployee() {
-//        return employee;
-//    }
-//
-//    public void setEmployee(Employee employee) {
-//        this.employee = employee;
-//    }
-
-    public String getDocumentUrl() {
-        return documentUrl;
+    public Long getId() {
+        return id;
     }
 
-    public void setDocumentUrl(String documentUrl) {
-        this.documentUrl = documentUrl;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getStatus() {
-        return status;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public LeaveType getType() {
+        return type;
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setType(LeaveType type) {
+        this.type = type;
     }
 
     public LocalDate getStartDate() {
@@ -69,11 +60,19 @@ public class LeaveResponse {
         this.startDate = startDate;
     }
 
-    public LeaveType getType() {
-        return type;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setType(LeaveType type) {
-        this.type = type;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getDocumentUrl() {
+        return documentUrl;
+    }
+
+    public void setDocumentUrl(String documentUrl) {
+        this.documentUrl = documentUrl;
     }
 }
