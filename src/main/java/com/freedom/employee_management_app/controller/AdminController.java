@@ -18,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v3/admin")
-@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     private final AdminService adminService;
@@ -32,7 +31,7 @@ public class AdminController {
 
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value ="/create-employee",  consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<CreateEmployeeDto>> createEmployee(@RequestBody EmployeeInfo employeeInfo) {
@@ -50,17 +49,18 @@ public ResponseEntity<ApiResponse<LoginResponse>> login (@RequestBody LoginReque
 
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-leave-status/{leaveId}")
     public ResponseEntity<ApiResponse<String>> updateLeaveStatus(@PathVariable Long leaveId,
                                                                  @RequestParam String status){
         return ResponseEntity.ok(adminService.updateLeaveStatus(leaveId, status));
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/employees")
     public ResponseEntity<List<EmployeeResponse>> getAllEmployees(){
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/pending-leaves")
     public ResponseEntity<ApiResponse<Page<LeaveResponse>>> getPendingLeaveResponse(
             @RequestParam(defaultValue = "0") int page,

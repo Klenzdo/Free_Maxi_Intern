@@ -1,9 +1,11 @@
 package com.freedom.employee_management_app.controller;
 
 import com.freedom.employee_management_app.dto.*;
+import com.freedom.employee_management_app.entity.Employee;
 import com.freedom.employee_management_app.exception.EmployeeNotFoundException;
 import com.freedom.employee_management_app.exception.InvalidPasswordException;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
+import com.freedom.employee_management_app.service.AdminService;
 import com.freedom.employee_management_app.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +16,10 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
+
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
+
     }
 
     @PostMapping("/login")
@@ -39,4 +43,11 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
 
     }
+//
+//    @PostMapping("/notify-admin/{employeeId}")
+//    public ResponseEntity<ApiResponse<Employee>> notifyAdminAboutLockedEmployee (@PathVariable Long employeeId){
+//        try{
+//            Employee employee = .findByEmployeeId(employeeId)
+//        }
+//    }
 }

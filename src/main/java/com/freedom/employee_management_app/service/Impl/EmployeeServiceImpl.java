@@ -1,12 +1,11 @@
 package com.freedom.employee_management_app.service.Impl;
 
 import com.freedom.employee_management_app.auth.service.JwtService;
-import com.freedom.employee_management_app.dto.EmailDetails;
-import com.freedom.employee_management_app.dto.LoginRequestDto;
-import com.freedom.employee_management_app.dto.LoginResponse;
+import com.freedom.employee_management_app.dto.*;
 import com.freedom.employee_management_app.entity.Employee;
 import com.freedom.employee_management_app.exception.EmployeeNotFoundException;
 import com.freedom.employee_management_app.exception.InvalidPasswordException;
+import com.freedom.employee_management_app.exception.InvalidTokenException;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
 import com.freedom.employee_management_app.payload.response.EmployeeResponse;
 import com.freedom.employee_management_app.repository.EmployeeRepository;
@@ -14,16 +13,13 @@ import com.freedom.employee_management_app.service.EmailService;
 import com.freedom.employee_management_app.service.EmployeeService;
 import com.freedom.employee_management_app.utils.SecurityUtils;
 import com.freedom.employee_management_app.utils.TokenBlackListService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -56,11 +52,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public ApiResponse<LoginResponse> login(LoginRequestDto request) throws Exception{
-//       Employee e = employeeRepository.findByEmployeeId(request.getEmployeeId())
-//                       .orElseThrow(()-> new EmployeeNotFoundException("Employee does not exist"));
-//        if (!passwordEncoder.matches(e.getPassword(), request.getPassword())) {
-//            throw new InvalidPasswordException("Incorrect password");
-//        }
+       Employee e = employeeRepository.findByEmployeeId(request.getEmployeeId())
+                       .orElseThrow(()-> new EmployeeNotFoundException("Employee does not exist"));
+        if (!passwordEncoder.matches(request.getPassword(),e.getPassword())) {
+            throw new InvalidPasswordException("Incorrect password");
+        }
+        if(e.isLocked()){
+            throw new Exception("Account is locked, contact your administrator");
+        }
         Authentication authentication = authenticationProvider.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmployeeId(),
@@ -103,9 +102,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
 
 
-
-
-
         return new ApiResponse<>("Password successfully updated", null);
     }
 
@@ -118,6 +114,41 @@ public class EmployeeServiceImpl implements EmployeeService {
                         employee.getEmail(),
                         employee.getRole()))
                 .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public ApiResponse<String> forgotPassword(ForgotPasswordRequest request) throws EmployeeNotFoundException {
+        Employee employee = employeeRepository.findByEmail(request.getEmail())
+                .orElseThrow(()-> new EmployeeNotFoundException("Employee not found"));
+
+        String token = UUID.randomUUID().toString();
+        employee.setResetPasswordToken(token);
+        employeeRepository.save(employee);
+
+        String resetLink = "http://localhost:9000/api/auth/reset-password?token=" + token;
+
+        EmailDetails emailDetails = new EmailDetails(
+                employee.getEmail(),
+                "Password Reset Request",
+                "Click the link to reset your password: " + resetLink
+        );
+
+        emailService.sendEmail(emailDetails);
+
+        return new ApiResponse<>("Reset link sent to email", null);
+    }
+
+    @Override
+    public ApiResponse<String> resetPassword(ResetPasswordRequest request) throws InvalidTokenException {
+        Employee employee = employeeRepository.findByResetPasswordToken(request.getTokenOrOtp())
+                .orElseThrow(()-> new InvalidTokenException("Invalid or expired token"));
+
+        employee.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        employee.setResetPasswordToken(null);
+        employeeRepository.save(employee);
+
+        return new ApiResponse<>("Password reset successful", null);
 
     }
 

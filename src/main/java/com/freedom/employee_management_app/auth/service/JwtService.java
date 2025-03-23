@@ -6,9 +6,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,7 +20,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private final static String SECRET_KEY = "MIHcAgEBBEIBalbNcwF1mb/0RLmXcY2tvVlYUzNAQEj7+SJVEOZm1fy/+LJcaM8ziKdyDF2GjlNjNll+ddfMf0qiyi0DXJiR8HKgBwYFK4EEACOhgYkDgYYABACjuzJ+k2yr5Uy+T9Wqi5NQ49nCkOb/8po6LmUD0g1QEoAQVDYBm7H8oVxqOqRQRdRfAvNyIBSp7exGBEaRDvpBxwBSv9N+liDQTecWCpssRDG9qED7TGtduV1AXPABiHMehOIqyVTxwTHzhUwyIpNEMI2+8IVC/7rmkiXb3YU+bfqamQ==";
+    @Value("${secret-key}")
+    private  String secretKey ;
     private final TokenBlackListService tokenBlackListService;
 
     public JwtService(TokenBlackListService tokenBlackListService) {
@@ -29,16 +33,16 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parser()
-                .setSigningKey(getSignInKey())
+                .verifyWith(getSignInKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
 
 
     }
 
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+    private SecretKey getSignInKey() {
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -57,11 +61,11 @@ public class JwtService {
     public String generateToken(Map<String, Object> extractClaims, UserDetails userDetails, String employeeId) {
         return Jwts
                 .builder()
-                .setClaims(extractClaims)
-                .setSubject(employeeId)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() *1000 *60 *24))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256 )
+                .claims(extractClaims)
+                .subject(employeeId)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() *1000 *60 *24))
+                .signWith(getSignInKey(), Jwts.SIG.HS256 )
                 .compact();
 
     }

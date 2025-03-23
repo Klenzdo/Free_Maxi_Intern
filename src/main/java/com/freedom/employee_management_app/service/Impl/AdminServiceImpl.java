@@ -22,6 +22,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.UUID;
 
 
@@ -69,7 +71,7 @@ public class AdminServiceImpl implements AdminService {
         // Construct the details of email using EmailDetails object
         EmailDetails emailDetails = new EmailDetails();
         emailDetails.setRecipient(employee.getEmail());
-        emailDetails.setEmailSubject("Welcome to the company");
+        emailDetails.setEmailSubject("Welcome to the Maxi-Farm Company");
         emailDetails.setEmailBody(String.format(
                 "Your account has been created.\n\n" +
                         "Employee ID: %s\n" +
@@ -96,7 +98,7 @@ public class AdminServiceImpl implements AdminService {
         );
         Employee admin = (Employee) authentication.getPrincipal();
 //    employeeRepository.findByEmployeeId(request.getEmployeeId()).orElseThrow(()->new EntityNotFoundException("Employee with id " + request.getEmployeeId() + " does not exist"));
-        String jwt = jwtService.generateToken(admin, admin.getEmail());
+        String jwt = jwtService.generateToken(admin, admin.getEmployeeId());
         return new ApiResponse<>("Successful login", new LoginResponse(jwt));
     }
 
@@ -114,6 +116,20 @@ public class AdminServiceImpl implements AdminService {
 
         return new ApiResponse<>("Leave request has been " + status.toLowerCase(), null);
     }
+
+//    @Override
+//    public ApiResponse<Employee> notifyAdmin(Employee employee) {
+//        List<Employee> admins = employeeRepository.findByRole("ADMIN");
+//        for (Employee admin : admins) {
+//            EmailDetails emailDetails = new EmailDetails(
+//                    admin.getEmail(),
+//
+//           "Employee: " + employee.getFullName() + "with Employee ID: " + employee.getEmployeeId() + "Account is Locked", "Employee Account Locked");
+//            emailService.sendEmail(emailDetails);
+//
+//        }
+//        return new ApiResponse<>("Admin notification sent successfully",  employee);
+//    }
 
 
     private String generateDefaultPassword() {

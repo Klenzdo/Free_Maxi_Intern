@@ -1,9 +1,12 @@
 package com.freedom.employee_management_app.service;
 
+import com.freedom.employee_management_app.dto.ForgotPasswordRequest;
 import com.freedom.employee_management_app.dto.LoginRequestDto;
 import com.freedom.employee_management_app.dto.LoginResponse;
+import com.freedom.employee_management_app.dto.ResetPasswordRequest;
 import com.freedom.employee_management_app.exception.EmployeeNotFoundException;
 import com.freedom.employee_management_app.exception.InvalidPasswordException;
+import com.freedom.employee_management_app.exception.InvalidTokenException;
 import com.freedom.employee_management_app.payload.request.LeaveRequest;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
 import com.freedom.employee_management_app.payload.response.EmployeeResponse;
@@ -20,6 +23,9 @@ public interface EmployeeService {
     ApiResponse<String> logout(String authHeader);
     ApiResponse<String> updatePassword( String newPassword, String oldPassword) throws EmployeeNotFoundException, InvalidPasswordException;
     List<EmployeeResponse> getAllEmployees();
+    ApiResponse<String> forgotPassword(ForgotPasswordRequest request)throws EmployeeNotFoundException;
+    ApiResponse<String> resetPassword(ResetPasswordRequest request)throws InvalidTokenException;
+
 
 
 }

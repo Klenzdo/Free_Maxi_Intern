@@ -112,7 +112,7 @@ public class ClockServiceImpl implements ClockService {
         employee.setLateCount(employee.getLateCount() + 1);
 
         //Lock employee account after 3 late arrivals
-        if(employee.getLateCount() >= 3)
+        if(employee.getLateCount() == 3)
                 employee.setLocked(true);
 
             employeeRepository.save(employee);

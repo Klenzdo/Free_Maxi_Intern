@@ -37,8 +37,14 @@ public class Employee implements UserDetails {
     @Column(nullable = false)
     private Roles role;
 
-    @Column
+    @Column (name = "reset_token")
     private String resetPasswordToken;
+
+    @Column (name = "otp")
+    private String otp;
+
+    @Column (name = "otp_expiry")
+    private LocalDateTime otpExpiry;
 
     @Column
     private LocalDateTime resetTokenExpiry;
@@ -53,7 +59,7 @@ public class Employee implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

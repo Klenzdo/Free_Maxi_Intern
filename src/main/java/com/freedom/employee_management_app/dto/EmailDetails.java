@@ -6,14 +6,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 //@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+
+
+
 public class EmailDetails {
 
         private String recipient;
         private String emailBody;
         private String emailSubject;
+
+    public EmailDetails(String recipient, String emailBody, String emailSubject) {
+        this.recipient = recipient;
+        this.emailBody = emailBody;
+        this.emailSubject = emailSubject;
+    }
+
+    public EmailDetails() {
+    }
 
     public String getRecipient() {
         return recipient;

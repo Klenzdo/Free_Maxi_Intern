@@ -15,6 +15,7 @@ public interface AdminService {
     CreateEmployeeDto createEmployee(EmployeeInfo employeeInfo);
     ApiResponse<LoginResponse> login(LoginRequest request);
     ApiResponse<String> updateLeaveStatus(Long leaveId, String status);
+//    ApiResponse<Employee> notifyAdmin(Employee employee);
 //    List<Employee> getAllEmployees();
 
 //    ApiResponse<LogOutResponse> logout(HttpServletRequest request);
