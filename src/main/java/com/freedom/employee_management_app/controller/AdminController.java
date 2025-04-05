@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v3/admin")
@@ -60,13 +61,23 @@ public ResponseEntity<ApiResponse<LoginResponse>> login (@RequestBody LoginReque
     public ResponseEntity<List<EmployeeResponse>> getAllEmployees(){
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/pending-leaves")
-    public ResponseEntity<ApiResponse<Page<LeaveResponse>>> getPendingLeaveResponse(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        ApiResponse<Page<LeaveResponse>> response = leaveService.getPendingLeaveRequests(page, size);
-        return ResponseEntity.ok(response);
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @GetMapping("/pending-leaves")
+//    public ResponseEntity<ApiResponse<Page<LeaveResponse>>> getPendingLeaveResponse(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size) {
+//        ApiResponse<Page<LeaveResponse>> response = leaveService.getPendingLeaveRequests(page, size);
+//        return ResponseEntity.ok(response);
+//
+//    }\
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/leaves")
+    public ResponseEntity<ApiResponse<Map<String, Page<LeaveResponse>>>> getAllLeaves(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+
+        ApiResponse<Map<String, Page<LeaveResponse>>> response = leaveService.getAllLeaveRequests(page, size);
+        return ResponseEntity.ok(response);
     }
 }

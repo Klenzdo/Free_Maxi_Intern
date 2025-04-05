@@ -1,5 +1,6 @@
 package com.freedom.employee_management_app.entity;
 
+import com.freedom.employee_management_app.enums.LeaveStatus;
 import com.freedom.employee_management_app.enums.LeaveType;
 import jakarta.persistence.*;
 import lombok.Getter;

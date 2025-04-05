@@ -22,10 +22,10 @@ public class UserServiceImpl implements UserService {
     @PostConstruct
     @Override
     public void createAdminAccount() {
-        if (employeeRepository.findByEmail("admin@example.com").isEmpty()){
+        if (employeeRepository.findByEmail("freedoklenz@gmail.com").isEmpty()){
             Employee admin = new Employee();
             admin.setFullName("Admin User");
-            admin.setEmail("admin@example.com");
+            admin.setEmail("freedoklenz@gmail.com");
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setRole(Roles.ADMIN);
             admin.setEmployeeId("ADM-123456");

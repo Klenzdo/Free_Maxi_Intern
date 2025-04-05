@@ -2,6 +2,8 @@ package com.freedom.employee_management_app.service.Impl;
 
 import com.freedom.employee_management_app.entity.ClockLog;
 import com.freedom.employee_management_app.entity.Employee;
+import com.freedom.employee_management_app.entity.UserSettings;
+import com.freedom.employee_management_app.exception.EmployeeNotFoundException;
 import com.freedom.employee_management_app.payload.request.ClockLogRequest;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
 import com.freedom.employee_management_app.payload.response.ClockInResponse;
@@ -9,10 +11,11 @@ import com.freedom.employee_management_app.payload.response.ClockLogResponse;
 import com.freedom.employee_management_app.payload.response.ClockOutResponse;
 import com.freedom.employee_management_app.repository.ClockLogRepository;
 import com.freedom.employee_management_app.repository.EmployeeRepository;
+import com.freedom.employee_management_app.repository.UserSettingRepository;
 import com.freedom.employee_management_app.service.ClockService;
+import com.freedom.employee_management_app.service.NotificationService;
 import com.freedom.employee_management_app.utils.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,15 +31,21 @@ import java.util.List;
 public class ClockServiceImpl implements ClockService {
 
     private final ClockLogRepository clockLogRepository;
+    private final NotificationService notificationService;
+    private final SecurityUtils securityUtils;
 
-    public ClockServiceImpl(ClockLogRepository clockLogRepository, EmployeeRepository employeeRepository, SecurityUtils securityUtils) {
+    public ClockServiceImpl(ClockLogRepository clockLogRepository, NotificationService notificationService, SecurityUtils securityUtils, EmployeeRepository employeeRepository, UserSettingRepository userSettingRepository) {
         this.clockLogRepository = clockLogRepository;
-        this.employeeRepository = employeeRepository;
+        this.notificationService = notificationService;
         this.securityUtils = securityUtils;
+        this.employeeRepository = employeeRepository;
+        this.userSettingRepository = userSettingRepository;
+
     }
 
     private final EmployeeRepository employeeRepository;
-    private final SecurityUtils securityUtils;
+
+    private final UserSettingRepository userSettingRepository;
 
     @Override
     public ApiResponse<ClockInResponse> clockIn(Employee employee) {
@@ -70,7 +79,8 @@ public class ClockServiceImpl implements ClockService {
         clockLogRepository.save(log);
 
         if(isLate) {
-            incrementLateCount(employee.getId());// employeeId
+//            incrementLateCount(employee.getId());
+            updateLateCount(employee);
         }
 
         return new ApiResponse<>("Successfully clocked in", new ClockInResponse(log));
@@ -116,6 +126,30 @@ public class ClockServiceImpl implements ClockService {
                 employee.setLocked(true);
 
             employeeRepository.save(employee);
+
+    }
+
+    private void updateLateCount(Employee employee){
+
+        UserSettings userSettings = userSettingRepository.findByEmployeeId(employee.getId())
+                .orElseGet(()->{
+                    UserSettings newSettings = new UserSettings();
+                    newSettings.setEmployee(employee);
+                    return newSettings;
+                });
+
+        userSettings.setLateCount(userSettings.getLateCount() +1);
+        userSettings.setLastModified(LocalDateTime.now());
+
+        if(userSettings.getLateCount() == 3){
+            employee.setLocked(true);
+            employeeRepository.save(employee);
+
+            String message = "Employee" + employee.getFullName() + "(ID: " + employee.getEmployeeId() + ") has been locked due to multiple late counts.";
+            notificationService.notifyAdmin(message);
+        }
+        userSettingRepository.save(userSettings);
+
 
     }
 

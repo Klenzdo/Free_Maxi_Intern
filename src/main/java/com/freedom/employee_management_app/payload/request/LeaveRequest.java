@@ -25,6 +25,8 @@ public class LeaveRequest {
         this.documentUrl = documentUrl;
     }
 
+    public LeaveRequest() {
+    }
 
     public LeaveType getType() {
         return type;
