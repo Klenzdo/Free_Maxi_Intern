@@ -110,6 +110,8 @@ public class LeaveServiceImpl implements LeaveService {
 
 
         notificationService.sendEmailNotification(emailDetails);
+
+        notificationService.sendInternalNotification("Check your email for leave summary");
     }
 
 

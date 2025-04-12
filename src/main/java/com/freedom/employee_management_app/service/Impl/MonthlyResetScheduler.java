@@ -24,8 +24,10 @@ public class MonthlyResetScheduler {
 
     @Scheduled(cron = "0 0 0 1 * ?")
     public void resetLockedAccounts(){
+        System.out.println(" ============================================================== ");
+        System.out.println("Schedule started");
         List<UserSettings> lockedAccounts = userSettingRepository.findLockedAccounts();
-
+        System.out.println("Locked account size " + lockedAccounts.size());
         for(UserSettings settings : lockedAccounts){
             Employee employee = settings.getEmployee();
             employee.setLocked(false);
@@ -33,6 +35,9 @@ public class MonthlyResetScheduler {
 
             employeeRepository.save(employee);
             userSettingRepository.save(settings);
+
+            System.out.println(" ============================================================== ");
+            System.out.println("Schedule ended");
         }
     }
 }

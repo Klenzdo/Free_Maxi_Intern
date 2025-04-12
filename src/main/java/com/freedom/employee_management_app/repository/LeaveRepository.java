@@ -7,10 +7,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
 public interface LeaveRepository extends JpaRepository<Leave, Long> {
     Optional<Leave> findById(Long id);
     Page<Leave> findByStatus(String status, Pageable pageable);
+    boolean existsByEmployeeIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
+            Long employeeId,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
+
 }

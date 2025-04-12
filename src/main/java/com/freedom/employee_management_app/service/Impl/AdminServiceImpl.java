@@ -4,6 +4,7 @@ import com.freedom.employee_management_app.auth.service.JwtService;
 import com.freedom.employee_management_app.dto.*;
 import com.freedom.employee_management_app.entity.Employee;
 import com.freedom.employee_management_app.entity.Leave;
+import com.freedom.employee_management_app.exception.UnauthorizedException;
 import com.freedom.employee_management_app.payload.request.LoginRequest;
 import com.freedom.employee_management_app.payload.response.ApiResponse;
 import com.freedom.employee_management_app.repository.EmployeeRepository;
@@ -11,6 +12,7 @@ import com.freedom.employee_management_app.repository.LeaveRepository;
 import com.freedom.employee_management_app.service.AdminService;
 import com.freedom.employee_management_app.service.EmailService;
 import com.freedom.employee_management_app.utils.SecurityUtils;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,14 +26,15 @@ import java.util.UUID;
 
 
 @Service
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class AdminServiceImpl implements AdminService {
     private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtils securityUtils;
     private final LeaveRepository leaveRepository;
+    private final MonthlyResetScheduler resetScheduler;
 
-    public AdminServiceImpl(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder, EmailService emailService, JwtService jwtService, AuthenticationProvider authenticationProvider, SecurityUtils securityUtils, LeaveRepository leaveRepository) {
+    public AdminServiceImpl(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder, EmailService emailService, JwtService jwtService, AuthenticationProvider authenticationProvider, SecurityUtils securityUtils, LeaveRepository leaveRepository, MonthlyResetScheduler resetScheduler) {
         this.employeeRepository = employeeRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
@@ -39,6 +42,7 @@ public class AdminServiceImpl implements AdminService {
         this.authenticationProvider = authenticationProvider;
         this.securityUtils = securityUtils;
         this.leaveRepository = leaveRepository;
+        this.resetScheduler = resetScheduler;
     }
 
     private final EmailService emailService;
@@ -92,6 +96,9 @@ public class AdminServiceImpl implements AdminService {
                 )
         );
         Employee admin = (Employee) authentication.getPrincipal();
+        if(!admin.getRole().name().equalsIgnoreCase("admin")){
+            throw new UnauthorizedException("Insufficient grant");
+        }
 //    employeeRepository.findByEmployeeId(request.getEmployeeId()).orElseThrow(()->new EntityNotFoundException("Employee with id " + request.getEmployeeId() + " does not exist"));
         String jwt = jwtService.generateToken(admin, admin.getEmployeeId());
         return new ApiResponse<>("Successful login", new LoginResponse(jwt));
@@ -110,6 +117,16 @@ public class AdminServiceImpl implements AdminService {
         leaveRepository.save(leave);
 
         return new ApiResponse<>("Leave request has been " + status.toLowerCase(), null);
+    }
+
+    @Override
+    public ApiResponse<Void> resetLockedEmployees() {
+
+        if(!securityUtils.isCurrentUserAdmin()){
+            throw new AccessDeniedException("Only admins can reset locked employees account.");
+        }
+        resetScheduler.resetLockedAccounts();
+        return new ApiResponse<>("Locked employee account reset successfully",null);
     }
 
 //    @Override

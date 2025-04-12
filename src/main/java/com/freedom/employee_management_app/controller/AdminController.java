@@ -33,7 +33,7 @@ public class AdminController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value ="/create-employee",  consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/create-employee", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<CreateEmployeeDto>> createEmployee(@RequestBody EmployeeInfo employeeInfo) {
         CreateEmployeeDto createdEmployee = adminService.createEmployee(employeeInfo);
@@ -42,23 +42,24 @@ public class AdminController {
         return ResponseEntity.ok(response);
 
     }
-    
+
     @PostMapping("/login")
-public ResponseEntity<ApiResponse<LoginResponse>> login (@RequestBody LoginRequest request){
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
+
         System.out.println("Login method entered");
-      return ResponseEntity.ok (adminService.login(request));
-
-
+        return ResponseEntity.ok(adminService.login(request));
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-leave-status/{leaveId}")
     public ResponseEntity<ApiResponse<String>> updateLeaveStatus(@PathVariable Long leaveId,
-                                                                 @RequestParam String status){
+                                                                 @RequestParam String status) {
         return ResponseEntity.ok(adminService.updateLeaveStatus(leaveId, status));
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/employees")
-    public ResponseEntity<List<EmployeeResponse>> getAllEmployees(){
+    public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 //    @PreAuthorize("hasRole('ADMIN')")
@@ -75,9 +76,15 @@ public ResponseEntity<ApiResponse<LoginResponse>> login (@RequestBody LoginReque
     @GetMapping("/leaves")
     public ResponseEntity<ApiResponse<Map<String, Page<LeaveResponse>>>> getAllLeaves(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size){
+            @RequestParam(defaultValue = "10") int size) {
 
         ApiResponse<Map<String, Page<LeaveResponse>>> response = leaveService.getAllLeaveRequests(page, size);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("reset-locked")
+    public ResponseEntity<ApiResponse<Void>> resetLockedEmployees(){
+        adminService.resetLockedEmployees();
+        return ResponseEntity.ok(adminService.resetLockedEmployees());
     }
 }
